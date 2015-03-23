@@ -9,13 +9,12 @@ Helper functions used throughout Cookiecutter.
 """
 
 from __future__ import unicode_literals
+import contextlib
 import errno
 import logging
 import os
-import sys
 import stat
 import shutil
-import contextlib
 
 
 def force_delete(func, path, exc_info):
@@ -46,7 +45,7 @@ def make_sure_path_exists(path):
     :param path: A directory path.
     """
 
-    logging.debug("Making sure path exists: {0}".format(path))
+    logging.debug('Making sure path exists: {0}'.format(path))
     try:
         os.makedirs(path)
     except OSError as exception:
@@ -68,3 +67,13 @@ def work_in(dirname=None):
         yield
     finally:
         os.chdir(curdir)
+
+
+def make_executable(script_path):
+    """
+    Makes `script_path` executable
+
+    :param script_path: The file to change
+    """
+    status = os.stat(script_path)
+    os.chmod(script_path, status.st_mode | stat.S_IEXEC)

@@ -11,69 +11,37 @@ Functions for prompting the user for project info.
 from __future__ import unicode_literals
 import sys
 
-PY3 = sys.version > '3'
-if PY3:
-    iteritems = lambda d: iter(d.items())
-    def read_response(prompt=''):
-        """
-        Prompt the user for a response.
-
-        Prints the given prompt (which should be a Unicode string),
-        and returns the text entered by the user as a Unicode string.
-
-        :param prompt: A Unicode string that is presented to the user.
-        """
-        # The Python 3 input function does exactly what we want
-        return input(prompt)
-else:
-    def read_response(prompt=''):
-        """
-        Prompt the user for a response.
-
-        Prints the given prompt (which should be a Unicode string),
-        and returns the text entered by the user as a Unicode string.
-
-        :param prompt: A Unicode string that is presented to the user.
-        """
-        # For Python 2, raw_input takes a byte string argument for the prompt.
-        # This must be encoded using the encoding used by sys.stdout.
-        # The result is a byte string encoding using sys.stdin.encoding.
-        # However, if the program is not being run interactively, sys.stdout
-        # and sys.stdin may not have encoding attributes.
-        # In that case we don't print a prompt (stdin/out isn't interactive,
-        # so prompting is pointless), and we assume the returned data is
-        # encoded using sys.getdefaultencoding(). This may not be right,
-        # but it's likely the best we can do.
-        # Isn't Python 2 encoding support wonderful? :-)
-        if sys.stdout.encoding:
-            prompt = prompt.encode(sys.stdout.encoding)
-        else:
-            prompt = ''
-        enc = sys.stdin.encoding or sys.getdefaultencoding()
-        return raw_input(prompt).decode(enc)
-    iteritems = lambda d: d.iteritems()
+from .compat import iteritems, read_response, is_string
+from jinja2.environment import Environment
 
 
-def prompt_for_config(context):
+def prompt_for_config(context, no_input=False):
     """
     Prompts the user to enter new config, using context as a source for the
     field names and sample values.
+
+    :param no_input: Prompt the user at command line for manual configuration?
     """
     cookiecutter_dict = {}
+    env = Environment()
 
-    for key, val in iteritems(context['cookiecutter']):
-        prompt = "{0} (default is \"{1}\")? ".format(key, val)
+    for key, raw in iteritems(context['cookiecutter']):
+        raw = raw if is_string(raw) else str(raw)
+        val = env.from_string(raw).render(cookiecutter=cookiecutter_dict)
 
-        new_val = read_response(prompt).strip()
+        if not no_input:
+            prompt = '{0} (default is "{1}")? '.format(key, val)
 
-        if new_val == '':
-            new_val = val
+            new_val = read_response(prompt).strip()
 
-        cookiecutter_dict[key] = new_val
+            if new_val != '':
+                val = new_val
+
+        cookiecutter_dict[key] = val
     return cookiecutter_dict
 
 
-def query_yes_no(question, default="yes"):
+def query_yes_no(question, default='yes'):
     """
     Ask a yes/no question via `read_response()` and return their answer.
 
@@ -89,15 +57,15 @@ def query_yes_no(question, default="yes"):
     http://code.activestate.com/recipes/577058/
 
     """
-    valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
+    valid = {'yes': True, 'y': True, 'ye': True, 'no': False, 'n': False}
     if default is None:
-        prompt = " [y/n] "
-    elif default == "yes":
-        prompt = " [Y/n] "
-    elif default == "no":
-        prompt = " [y/N] "
+        prompt = ' [y/n] '
+    elif default == 'yes':
+        prompt = ' [Y/n] '
+    elif default == 'no':
+        prompt = ' [y/N] '
     else:
-        raise ValueError("invalid default answer: '%s'" % default)
+        raise ValueError('Invalid default answer: "{0}"'.format(default))
 
     while True:
         sys.stdout.write(question + prompt)
@@ -108,5 +76,5 @@ def query_yes_no(question, default="yes"):
         elif choice in valid:
             return valid[choice]
         else:
-            sys.stdout.write("Please respond with 'yes' or 'no' "
-                             "(or 'y' or 'n').\n")
+            sys.stdout.write('Please respond with "yes" or "no" '
+                             '(or "y" or "n").\n')

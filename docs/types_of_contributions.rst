@@ -38,10 +38,16 @@ Implement Features
 Look through the GitHub issues for features. Anything tagged with "enhancement"
 is open to whoever wants to implement it.
 
+Please do not combine multiple feature enhancements into a single pull request.
+
+Note: this project is a bit conservative, so new features might not get into core.
+If possible, it's best to try and implement feature ideas as separate projects
+outside of the core codebase.
+
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-Cookiecutter could always use more documentation, whether as part of the 
+Cookiecutter could always use more documentation, whether as part of the
 official Cookiecutter docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 

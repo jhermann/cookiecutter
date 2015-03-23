@@ -23,11 +23,13 @@ class NonTemplatedInputDirException(CookiecutterException):
     rendered to something else, so that input_dir != output_dir.
     """
 
+
 class UnknownTemplateDirException(CookiecutterException):
     """
     Raised when Cookiecutter cannot determine which directory is the project
     template, e.g. more than one dir appears to be a template dir.
     """
+
 
 class MissingProjectDir(CookiecutterException):
     """
@@ -35,11 +37,13 @@ class MissingProjectDir(CookiecutterException):
     directory inside of a repo.
     """
 
+
 class ConfigDoesNotExistException(CookiecutterException):
     """
     Raised when get_config() is passed a path to a config file, but no file
     is found at that path.
     """
+
 
 class InvalidConfiguration(CookiecutterException):
     """
@@ -47,7 +51,20 @@ class InvalidConfiguration(CookiecutterException):
     badly contructed.
     """
 
+
 class UnknownRepoType(CookiecutterException):
     """
     Raised if a repo's type cannot be determined.
+    """
+
+
+class VCSNotInstalled(CookiecutterException):
+    """
+    Raised if the version control system (git or hg) is not installed.
+    """
+
+
+class ContextDecodingException(CookiecutterException):
+    """
+    Raised when a project's JSON context file can not be decoded.
     """

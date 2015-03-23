@@ -8,29 +8,22 @@ cookiecutter.generate
 Functions for generating a project from a project template.
 """
 from __future__ import unicode_literals
+from collections import OrderedDict
+import io
+import json
 import logging
 import os
-import io
 import shutil
-import sys
 
 from jinja2 import FileSystemLoader, Template
 from jinja2.environment import Environment
 from jinja2.exceptions import TemplateSyntaxError
 from binaryornot.check import is_binary
 
-from .exceptions import NonTemplatedInputDirException
+from .exceptions import NonTemplatedInputDirException, ContextDecodingException
 from .find import find_template
 from .utils import make_sure_path_exists, work_in
 from .hooks import run_hook
-
-
-if sys.version_info[:2] < (2, 7):
-    import simplejson as json
-    from ordereddict import OrderedDict
-else:
-    import json
-    from collections import OrderedDict
 
 
 def generate_context(context_file='cookiecutter.json', default_context=None,
@@ -41,14 +34,24 @@ def generate_context(context_file='cookiecutter.json', default_context=None,
 
     :param context_file: JSON file containing key/value pairs for populating
         the cookiecutter's variables.
-    :param default_context: Dictionary containing any config to take into account.
+    :param default_context: Dictionary containing config to take into account.
     :param extra_context: Dictionary containing configuration overrides
     """
 
     context = {}
 
     file_handle = open(context_file)
-    obj = json.load(file_handle, object_pairs_hook=OrderedDict)
+    try:
+        obj = json.load(file_handle, object_pairs_hook=OrderedDict)
+    except ValueError as e:
+        # JSON decoding error.  Let's throw a new exception that is more
+        # friendly for the developer or user.
+        full_fpath = os.path.abspath(context_file)
+        json_exc_message = str(e)
+        our_exc_message = (
+            'JSON decoding error while loading "{0}".  Decoding'
+            ' error details: "{1}"'.format(full_fpath, json_exc_message))
+        raise ContextDecodingException(our_exc_message)
 
     # Add the Python object to the context dictionary
     file_name = os.path.split(context_file)[1]
@@ -88,17 +91,17 @@ def generate_file(project_dir, infile, context, env):
     :param env: Jinja2 template execution environment.
     """
 
-    logging.debug("Generating file {0}".format(infile))
+    logging.debug('Generating file {0}'.format(infile))
 
     # Render the path to the output file (not including the root project dir)
     outfile_tmpl = Template(infile)
     outfile = os.path.join(project_dir, outfile_tmpl.render(**context))
-    logging.debug("outfile is {0}".format(outfile))
+    logging.debug('outfile is {0}'.format(outfile))
 
     # Just copy over binary files. Don't render.
     logging.debug("Check {0} to see if it's a binary".format(infile))
     if is_binary(infile):
-        logging.debug("Copying binary {0} to {1} without rendering"
+        logging.debug('Copying binary {0} to {1} without rendering'
                       .format(infile, outfile))
         shutil.copyfile(infile, outfile)
     else:
@@ -116,9 +119,9 @@ def generate_file(project_dir, infile, context, env):
             raise
         rendered_file = tmpl.render(**context)
 
-        logging.debug("Writing {0}".format(outfile))
+        logging.debug('Writing {0}'.format(outfile))
 
-        with io.open(outfile, 'w', encoding="utf-8") as fh:
+        with io.open(outfile, 'w', encoding='utf-8') as fh:
             fh.write(rendered_file)
 
     # Apply file permissions to output file
@@ -127,7 +130,8 @@ def generate_file(project_dir, infile, context, env):
 
 def render_and_create_dir(dirname, context, output_dir):
     """
-    Renders the name of a directory, creates the directory, and returns its path.
+    Renders the name of a directory, creates the directory, and
+    returns its path.
     """
 
     name_tmpl = Template(dirname)
@@ -147,14 +151,13 @@ def ensure_dir_is_templated(dirname):
     """
     Ensures that dirname is a templated directory name.
     """
-    if '{{' in dirname and \
-        '}}' in dirname:
+    if '{{' in dirname and '}}' in dirname:
         return True
     else:
         raise NonTemplatedInputDirException
 
 
-def generate_files(repo_dir, context=None, output_dir="."):
+def generate_files(repo_dir, context=None, output_dir='.'):
     """
     Renders the templates and saves them to files.
 
@@ -173,32 +176,33 @@ def generate_files(repo_dir, context=None, output_dir="."):
 
     # We want the Jinja path and the OS paths to match. Consequently, we'll:
     #   + CD to the template folder
-    #   + Set Jinja's path to "."
+    #   + Set Jinja's path to '.'
     #
     #  In order to build our files to the correct folder(s), we'll use an
     # absolute path for the target folder (project_dir)
 
     project_dir = os.path.abspath(project_dir)
-    logging.debug("project_dir is {0}".format(project_dir))
+    logging.debug('project_dir is {0}'.format(project_dir))
 
     # run pre-gen hook from repo_dir
     with work_in(repo_dir):
-        run_hook('pre_gen_project', project_dir)
+        run_hook('pre_gen_project', project_dir, context)
 
     with work_in(template_dir):
-        env = Environment()
-        env.loader = FileSystemLoader(".")
+        env = Environment(keep_trailing_newline=True)
+        env.loader = FileSystemLoader('.')
 
-        for root, dirs, files in os.walk("."):
+        for root, dirs, files in os.walk('.'):
             for d in dirs:
-                unrendered_dir = os.path.join(project_dir, os.path.join(root, d))
+                unrendered_dir = os.path.join(project_dir,
+                                              os.path.join(root, d))
                 render_and_create_dir(unrendered_dir, context, output_dir)
 
             for f in files:
                 infile = os.path.join(root, f)
-                logging.debug("f is {0}".format(f))
+                logging.debug('f is {0}'.format(f))
                 generate_file(project_dir, infile, context, env)
 
     # run post-gen hook from repo_dir
     with work_in(repo_dir):
-        run_hook('post_gen_project', project_dir)
+        run_hook('post_gen_project', project_dir, context)

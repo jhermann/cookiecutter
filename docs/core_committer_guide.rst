@@ -48,7 +48,7 @@ Fast and Focused
 
 Cookiecutter is designed to do one thing, and do that one thing very well.
 
-* Cover the use cases that @audreyr needs, and as little as possible beyond that :)
+* Cover the use cases that the core committers need, and as little as possible beyond that :)
 * Generates project templates from the command-line or API, nothing more
 * Minimize internal line of code (LOC) count
 * Ultra-fast project generation for high performance downstream tools
@@ -66,7 +66,7 @@ Stable
 * No pull requests will be accepted that drop test coverage on any platform, including Windows
 * Conservative decisions patterned after CPython's conservative decisions with stability in mind
 * Stable APIs that tool builders can rely on
-* New features require a +1 from @audreyr
+* New features require a +1 from 3 core committers
 
 VCS-Hosted Templates
 ~~~~~~~~~~~~~~~~~~~~~
@@ -109,7 +109,7 @@ Then either fix it or mark as please-help.
 
 For other issues: encourage friendly discussion, moderate debate, offer your thoughts.
 
-New features require a +1 from @audreyr.
+New features require a +1 from 2 other core committers (besides yourself).
 
 Process: Roadmap
 -----------------
@@ -126,6 +126,33 @@ Milestone size:
 
 * If a milestone contains too much, move some to the next milestone.
 * Err on the side of more frequent patch releases.
+
+Process: Pull Request merging and HISTORY.rst maintenance
+---------------------------------------------------------
+
+If you merge a pull request, you're responsible for updating `AUTHORS.rst` and `HISTORY.rst`
+
+When you're processing the first change after a release, create boilerplate following the existing pattern:
+
+    x.y.z (Development)
+    ~~~~~~~~~~~~~~~~~~~
+
+    The goals of this release are TODO: release summary of features
+
+    Features:
+
+    * Feature description, thanks to @contributor (#PR).
+
+    Bug Fixes:
+
+    * Bug fix description, thanks to @contributor (#PR).
+
+    Other changes:
+
+    * Description of the change, thanks to @contributor (#PR). 
+                      
+    .. _`@contributor`: https://github.com/contributor
+
 
 Process: Generating CONTRIBUTING.rst
 -------------------------------------
@@ -153,14 +180,26 @@ This will generate the following message::
     echo "WARNING: Don't forget to replace any :ref: statements with literal names"
     WARNING: Don't forget to replace any :ref: statements with literal names
 
+Process: Your own code changes
+-------------------------------
+
+All code changes, regardless of who does them, need to be reviewed and merged by someone else.
+This rule applies to all the core committers.
+
+Exceptions:
+
+* Minor corrections and fixes to pull requests submitted by others.
+* While making a formal release, the release manager can make necessary, appropriate changes.
+* Small documentation changes that reinforce existing subject matter. Most commonly being, but not limited to spelling and grammar corrections.
+
 Responsibilities
 -----------------
 
-#. Give priority to bug fixes over new features. This includes fixes for the Windows tests that broke at some point.
 #. Ensure cross-platform compatibility for every change that's accepted. Windows, Mac, Debian & Ubuntu Linux.
 #. Ensure that code that goes into core meets all requirements in this checklist: https://gist.github.com/audreyr/4feef90445b9680475f2
 #. Create issues for any major changes and enhancements that you wish to make. Discuss things transparently and get community feedback.
 #. Don't add any classes to the codebase unless absolutely needed. Err on the side of using functions.
+#. Keep feature versions as small as possible, preferably one new feature per version.
 #. Be welcoming to newcomers and encourage diverse new contributors from all backgrounds. See the Python Community Code of Conduct (https://www.python.org/psf/codeofconduct/).
 
 Becoming a Core Committer
@@ -169,6 +208,6 @@ Becoming a Core Committer
 Contributors may be given core commit privileges. Preference will be given to those with:
 
 A. Past contributions to Cookiecutter and other open-source projects. Contributions to Cookiecutter include both code (both accepted and pending) and friendly participation in the issue tracker. Quantity and quality are considered.
-B. A coding style that @audreyr finds simple, minimal, and clean.
+B. A coding style that the other core committers find simple, minimal, and clean.
 C. Access to resources for cross-platform development and testing.
 D. Time to devote to the project regularly.

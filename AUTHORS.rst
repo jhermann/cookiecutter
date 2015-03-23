@@ -50,8 +50,25 @@ Contributors
 * Adam Venturella (`@aventurella`_)
 * Monty Taylor (`@emonty`_)
 * schacki (`@schacki`_)
-* Ryan Olson(`@ryanolson`_)
+* Ryan Olson (`@ryanolson`_)
+* Trey Hunner (`@treyhunner`_)
+* Russell Keith-Magee (`@freakboy3742`_)
+* Mishbah Razzaque (`@mishbahr`_)
+* Robin Andeer (`@robinandeer`_)
+* Rachel Sanders (`@trustrachel`_)
+* Rémy Hubscher (`@Natim`_)
+* Dino Petron3 (`@dinopetrone`_)
+* Peter Inglesby (`@inglesp`_)
+* Ramiro Batista da Luz (`@ramiroluz`_)
+* Omer Katz (`@thedrow`_)
+* lord63 (`@lord63`_)
+* Randy Syring (`@rsyring`_)
+* Mark Jones (`@mark0978`_)
+* Marc Abramowitz (`@msabramo`_)
 
+.. _`@msabramo`: https://github.com/msabramo
+.. _`@mark0978`: https://github.com/mark0978
+.. _`@rsyring`: https://github.com/rsyring
 .. _`@vincentbernat`: https://github.com/vincentbernat
 .. _`@audreyr`: https://github.com/audreyr
 .. _`@pydanny`: https://github.com/pydanny
@@ -90,4 +107,14 @@ Contributors
 .. _`@emonty`: https://github.com/emonty
 .. _`@schacki`: https://github.com/schacki
 .. _`@ryanolson`: https://github.com/ryanolson
-
+.. _`@treyhunner`: https://github.com/treyhunner 
+.. _`@freakboy3742`: https://github.com/freakboy3742
+.. _`@mishbahr`: https://github.com/mishbahr
+.. _`@robinandeer`: https://github.com/robinandeer
+.. _`@trustrachel`: https://github.com/trustrachel
+.. _`@Natim`: https://github.com/Natim
+.. _`@dinopetrone`: https://github.com/dinopetrone
+.. _`@inglesp`: https://github.com/inglesp
+.. _`@ramiroluz`: https://github.com/ramiroluz
+.. _`@thedrow`: https://github.com/thedrow
+.. _`@lord63`: https://github.com/lord63
