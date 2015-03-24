@@ -87,7 +87,7 @@ def run_script_with_context(script_path, cwd, context):
         mode='w',
         suffix=extension
     ) as temp:
-        temp.write(Template(contents).render(**context))
+        temp.write(Template(contents).render(**context).encode('utf-8'))
 
     run_script(temp.name, cwd)
 
